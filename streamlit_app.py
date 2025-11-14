@@ -8,9 +8,15 @@ import cv2
 import tempfile
 import tflite_runtime.interpreter as tflite
 
+<<<<<<< HEAD
 # YOUR TFLITE MODEL LINK
 MODEL_URL = "https://drive.google.com/uc?id=1hrPLUbcWbolL8lfVgPpVAoXJ-IvU9RF6&export=download"
 MODEL_PATH = "deepfake_model.tflite"
+=======
+# CHANGE THIS LINE AFTER UPLOADING YOUR MODEL
+MODEL_URL = "https://drive.google.com/uc?id=1hrPLUbcWbolL8lfVgPpVAoXJ-IvU9RF6&export=download"
+MODEL_PATH = "deepfake_model.h5"
+>>>>>>> 7c6b4d4 (Add working tflite model link)
 
 st.set_page_config(page_title="Deepfake AI", page_icon="Detective", layout="centered")
 
