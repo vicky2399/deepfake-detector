@@ -46,4 +46,4 @@ Thumbs.db
 # === ALLOW THESE SPECIFIC FILES (UN-IGNORE) ===
 !requirements.txt
 !deepfake_model.h5
-!deepfake_model.tflite
+!deepfake_model.tflite"venv310/" 
