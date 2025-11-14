@@ -1,64 +1,55 @@
-# streamlit_app.py
 import streamlit as st
-import numpy as np
-from PIL import Image
-import os
-import urllib.request
 import cv2
-import tempfile
-import tflite_runtime.interpreter as tflite
+import numpy as np
+import tensorflow as tf
+from PIL import Image
 
-<<<<<<< HEAD
-# YOUR TFLITE MODEL LINK
-MODEL_URL = "https://drive.google.com/uc?id=1hrPLUbcWbolL8lfVgPpVAoXJ-IvU9RF6&export=download"
-MODEL_PATH = "deepfake_model.tflite"
-=======
-# CHANGE THIS LINE AFTER UPLOADING YOUR MODEL
-MODEL_URL = "https://drive.google.com/uc?id=1hrPLUbcWbolL8lfVgPpVAoXJ-IvU9RF6&export=download"
-MODEL_PATH = "deepfake_model.h5"
->>>>>>> 7c6b4d4 (Add working tflite model link)
-
-st.set_page_config(page_title="Deepfake AI", page_icon="Detective", layout="centered")
-
-# === DOWNLOAD MODEL ===
+# Load model (cached)
 @st.cache_resource
-def get_interpreter():
-    if not os.path.exists(MODEL_PATH):
-        with st.spinner("Downloading model (first time only)..."):
-            urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
-    interpreter = tflite.Interpreter(model_path=MODEL_PATH)
-    interpreter.allocate_tensors()
-    return interpreter
+def load_model():
+    try:
+        return tf.keras.models.load_model("deepfake_model.h5")
+    except:
+        st.error("Model not found. Check deepfake_model.h5")
+        return None
 
-# === PREPROCESS ===
-def prep(img):
-    img = img.convert("RGB").resize((224, 224))
-    arr = np.array(img, dtype=np.float32) / 255.0
-    return np.expand_dims(arr, axis=0)
+model = load_model()
 
-# === UI ===
-st.title("Deepfake AI")
-st.write("**Upload image to detect deepfake**")
+st.title("Deepfake Detector")
+st.write("Upload an image (JPG/PNG) to check if it's **real or fake**.")
 
-interpreter = get_interpreter()
-input_idx = interpreter.get_input_details()[0]['index']
-output_idx = interpreter.get_output_details()[0]['index']
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-def predict(arr):
-    interpreter.set_tensor(input_idx, arr)
-    interpreter.invoke()
-    return interpreter.get_tensor(output_idx)[0][0]
+if uploaded_file is not None and model is not None:
+    # Read image
+    file_bytes = np.frombuffer(uploaded_file.read(), np.uint8)
+    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    if img is None:
+        st.error("Invalid image file.")
+    else:
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        st.image(img_rgb, caption="Uploaded Image", use_column_width=True)
 
-# === UPLOAD IMAGE ===
-file = st.file_uploader("Choose image", type=['jpg', 'png', 'jpeg'])
-if file:
-    img = Image.open(file)
-    st.image(img, use_column_width=True)
-    if st.button("Check Now"):
-        with st.spinner("Analyzing..."):
-            p = predict(prep(img))
-            if p > 0.5:
-                st.error(f"**DEEPFAKE** ({p*100:.1f}%)")
+        # Preprocess
+        img_resized = cv2.resize(img_rgb, (224, 224))  # Adjust size if your model differs
+        img_norm = img_resized.astype(np.float32) / 255.0
+        img_batch = np.expand_dims(img_norm, axis=0)
+
+        # Predict
+        try:
+            prediction = model.predict(img_batch)[0][0]
+            prob_fake = float(prediction)
+            prob_real = 1 - prob_fake
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Real", f"{prob_real:.1%}")
+            with col2:
+                st.metric("Fake", f"{prob_fake:.1%}")
+
+            if prob_fake > 0.5:
+                st.error("Potential Deepfake Detected!")
             else:
-                st.success(f"**REAL** ({(1-p)*100:.1f}%)")
-                st.balloons()
+                st.success("Looks Authentic!")
+        except Exception as e:
+            st.error(f"Prediction failed: {e}")
