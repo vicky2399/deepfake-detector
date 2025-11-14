@@ -1,0 +1,45 @@
+# === DATA & LARGE FILES ===
+dataset/
+real/
+fake/
+*.h5
+*.pth
+*.pkl
+*.pickle
+*.zip
+*.rar
+*.jpg
+*.png
+*.jpeg
+
+# === DOCS & TEMP ===
+*.docx
+*.txt
+chatgpt.txt
+Procfile.txt
+code.docx
+DeepFake Detection.docx
+
+# === PYTHON CACHE ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# === VIRTUAL ENV ===
+venv/
+env/
+.venv/
+
+# === STREAMLIT ===
+.streamlit/
+*.streamlit
+
+# === IDE ===
+.vscode/
+.idea/
+*.iml
+
+# === OS ===
+.DS_Store
+Thumbs.db
