@@ -2,7 +2,6 @@
 dataset/
 real/
 fake/
-*.h5
 *.pth
 *.pkl
 *.pickle
@@ -32,7 +31,7 @@ env/
 .venv/
 
 # === STREAMLIT ===
-.streamlit/
+.streamlit/secrets.toml
 *.streamlit
 
 # === IDE ===
@@ -43,3 +42,8 @@ env/
 # === OS ===
 .DS_Store
 Thumbs.db
+
+# === ALLOW THESE SPECIFIC FILES (UN-IGNORE) ===
+!requirements.txt
+!deepfake_model.h5
+!deepfake_model.tflite
