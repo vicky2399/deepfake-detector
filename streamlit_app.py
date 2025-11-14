@@ -7,7 +7,7 @@ import os
 import urllib.request
 
 # CHANGE THIS LINE AFTER UPLOADING YOUR MODEL
-MODEL_URL = "https://drive.google.com/uc?id=YOUR_FILE_ID_HERE&export=download"
+MODEL_URL = "https://drive.google.com/uc?id=1crpqkA6Y1Beu0fgaXEs-pAriltoAey3A&export=download"
 MODEL_PATH = "deepfake_model.h5"
 
 st.set_page_config(page_title="Deepfake Detector", page_icon="Detective", layout="centered")
